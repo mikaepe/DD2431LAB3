@@ -17,22 +17,23 @@ def mlParams(X,y):
     # X is data points, y is labels for points
 
     classes = np.unique(y)             # result: [0,1,2,3,4]
-    mu = []
+
+    # compute the mu vectors:
+    m = np.zeros((len(classes),2))
     for j,c in enumerate(classes):
         i = y == c                      # return True/False length of y 
-        xlc = X[i,:]
-        N = sum(i)
-        print xlc
+        xlc = X[i,:]                    # the x with class c
+        m[j,:] = sum(xlc)/sum(i)        # store mean in mu
 
-    m = 1
+    # compute the Sigma matrix: (TODO)
+
     S = 1
     return m, S
 
 X,y = genBlobs()
 
-print X
-print y
+#print X
+#print y
 
 mlParams(X,y)
-
 
