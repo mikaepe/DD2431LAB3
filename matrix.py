@@ -1,5 +1,7 @@
 import numpy as np
 
+#massa matrisgrejer, från 
+
 
 # DIMENSIONS
 rows = 7
