@@ -4,8 +4,8 @@ from sklearn.datasets.samples_generator import make_blobs
 import numpy as np
 
 
-def genBlobs(n_samples=20,centers=5,n_features=2):
-    #                  200 originally
+def genBlobs(n_samples=10,centers=3,n_features=2):
+    #                  200 / 3 / 2 originally
     # Supplied from the lab material
     X, y = make_blobs(n_samples=n_samples,\
             centers=centers, n_features=n_features,\
@@ -17,23 +17,28 @@ def mlParams(X,y):
     # X is data points, y is labels for points
 
     classes = np.unique(y)             # result: [0,1,2,3,4]
+    nFeat = np.shape(X)[1]
 
     # compute the mu vectors:
-    m = np.zeros((len(classes),2))
-    for j,c in enumerate(classes):
+    m = np.zeros((len(classes),nFeat))
+    S = np.zeros((len(classes),nFeat,nFeat))
+    for k,c in enumerate(classes):
         i = y == c                      # return True/False length of y 
         xlc = X[i,:]                    # the x with class c
-        m[j,:] = sum(xlc)/sum(i)        # store mean in mu
-
-    # compute the Sigma matrix: (TODO)
-
-    S = 1
+        Nk = sum(i)
+        mu = sum(xlc)/Nk                # store mean in mu
+        m[k,:] = mu
+        xic = xlc - mu
+        #S[k,:,:] = xic.reshape(nFeat,1)*xic/Nk
+        S[k,:,:] = np.diag(sum(xic*xic))/Nk
+    
     return m, S
 
 X,y = genBlobs()
 
-#print X
-#print y
+print X
+print y
 
-mlParams(X,y)
-
+m,S = mlParams(X,y)
+print m
+print S
