@@ -7,21 +7,19 @@ def mlParams(X,y):
     # Assignment 1, computes ML-estimates of mu_k and Sigma_k    
     # X is data points, y is labels for points
 
-    classes = np.unique(y)             # result: [0,1,2,3,4]
-    nFeat = np.shape(X)[1]
-
-    # compute the mu vectors:
-    m = np.zeros((len(classes),nFeat))
+    classes = np.unique(y)              # array with unique classes
+    nFeat = np.shape(X)[1]              # number of features in data
+    m = np.zeros((len(classes),nFeat))  
     S = np.zeros((len(classes),nFeat,nFeat))
     for k,c in enumerate(classes):
         i = y == c                      # return True/False length of y 
-        xlc = X[i,:]                    # the x with class c
-        Nk = sum(i)
-        mu = sum(xlc)/Nk                # store mean in mu
-        m[k,:] = mu
-        xic = xlc - mu
+        Xk = X[i,:]                     # the X with class c
+        Nk = sum(i)                     # no of data points class c
+        mu = sum(Xk)/Nk                 # store mean in mu
+        m[k,:] = mu                     # store mu in m-matrix
+        xic = Xk - mu                   # center the data for S-comput.
         #S[k,:,:] = xic.reshape(nFeat,1)*xic/Nk
-        S[k,:,:] = np.diag(sum(xic*xic))/Nk
+        S[k,:,:] = np.diag(sum(xic*xic))/Nk # Naive (S(m,n) = 0, n != m)
     
     return m, S
 
