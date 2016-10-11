@@ -10,32 +10,26 @@ from labfuns import *
 import random
 
 
-# ## Bayes classifier functions to implement
-# 
+# Bayes classifier functions to implement
 # The lab descriptions state what each function should do.
 
 
 # NOTE: you do not need to handle the W argument for this part!
 # in: labels - N vector of class labels
 # out: prior - C x 1 vector of class priors
-
-
 def computePrior(labels, W=None):
-    Npts = labels.shape[0]
+    N = labels.shape[0]
     if W is None:
-        W = np.ones((Npts,1))/Npts
+        W = np.ones((N,1))/N
     else:
-        assert(W.shape[0] == Npts)
-    classes = np.unique(labels)
-    Nclasses = np.size(classes)
-
-    prior = np.zeros((Nclasses,1))
-
-    # TODO: compute the values of prior for each class!
-    # ==========================
+        assert(W.shape[0] == N)
+    classes = list(np.unique(labels))
+    #Nclasses = np.size(classes)
+    #prior = np.zeros((Nclasses,1))
+    labels = list(labels)
+    prior = [labels.count(x)/float(N) for x in classes]
+    prior = np.matrix(prior)
     
-    # ==========================
-
     return prior
 
 
@@ -69,10 +63,12 @@ def mlParams(X, labels, W=None):
 
 X,y = genBlobs(200,5,2)
 
-mu,S = mlParams(X,y)
-print 'mu = ',mu
-print 'Sigma = ',S
+#mu,S = mlParams(X,y)
+#print 'mu = ',mu
+#print 'Sigma = ',S
 
+Pk = computePrior(y)
+print Pk
 
 
 # in:      X - N x d matrix of M data points
