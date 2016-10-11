@@ -31,12 +31,13 @@ print 'X = ',X
 print 'y = ',y
 '''
 mu,S = mlParams(X,y)
-'''
 print 'mu = ',mu
 print 'Sigma = ',S
 
-fun.plotGaussian(X,y,mu,S)
+
 '''
+fun.plotGaussian(X,y,mu,S)
+
 
 def computePrior(y):
     N = len(y)
@@ -59,4 +60,4 @@ def classifyBayes(X,prior,mu,S):
 
 
 classifyBayes(X,Pk[0],mu[0,:],S[0,:,:])
-    
+'''    

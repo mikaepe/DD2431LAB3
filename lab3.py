@@ -3,19 +3,6 @@
 
 # # Lab 3: Bayes Classifier and Boosting
 
-# ## Jupyter notebooks
-# 
-# In this lab, you can use Jupyter <https://jupyter.org/> to get a nice layout of your code and plots in one document. However, you may also use Python as usual, without Jupyter.
-# 
-# If you have Python and pip, you can install Jupyter with `sudo pip install jupyter`. Otherwise you can follow the instruction on <http://jupyter.readthedocs.org/en/latest/install.html>.
-# 
-# And that is everything you need! Now use a terminal to go into the folder with the provided lab files. Then run `jupyter notebook` to start a session in that folder. Click `lab3.ipynb` in the browser window that appeared to start this very notebook. You should click on the cells in order and either press `ctrl+enter` or `run cell` in the toolbar above to evaluate all the expressions.
-
-# ## Import the libraries
-# 
-# In Jupyter, select the cell below and press `ctrl + enter` to import the needed libraries.
-# Check out `labfuns.py` if you are interested in the details.
-
 import numpy as np
 from scipy import misc
 from imp import reload
@@ -31,6 +18,8 @@ import random
 # NOTE: you do not need to handle the W argument for this part!
 # in: labels - N vector of class labels
 # out: prior - C x 1 vector of class priors
+
+
 def computePrior(labels, W=None):
     Npts = labels.shape[0]
     if W is None:
@@ -49,6 +38,7 @@ def computePrior(labels, W=None):
 
     return prior
 
+
 # NOTE: you do not need to handle the W argument for this part!
 # in:      X - N x d matrix of N data points
 #     labels - N vector of class labels
@@ -64,14 +54,26 @@ def mlParams(X, labels, W=None):
         W = np.ones((Npts,1))/float(Npts)
 
     mu = np.zeros((Nclasses,Ndims))
-    sigma = np.zeros((Nclasses,Ndims,Ndims))
+    S = np.zeros((Nclasses,Ndims,Ndims))
 
-    # TODO: fill in the code to compute mu and sigma!
-    # ==========================
-    
-    # ==========================
+    for k,c in enumerate(classes):
+        i = y == c              # return True/False length of labels
+        Xk = X[i,:]             # the X with class c
+        Nk = sum(i)             # no of data pts class c
+        muk = sum(Xk)/Nk        # store mean in muk
+        mu[k,:] = muk           # store muk in mu-matrix
+        xic = Xk - muk          # center data for S-computation
+        S[k,:,:] = np.diag(sum(xic*xic))/Nk     # Naive, (S(m,n) = 0, n != m)
 
-    return mu, sigma
+    return mu, S
+
+X,y = genBlobs(200,5,2)
+
+mu,S = mlParams(X,y)
+print 'mu = ',mu
+print 'Sigma = ',S
+
+
 
 # in:      X - N x d matrix of M data points
 #      prior - C x 1 matrix of class priors
@@ -292,4 +294,7 @@ class BoostClassifier(object):
 # visualize the test point together with the training points used to train
 # the class that the test point was classified to belong to
 #visualizeOlivettiVectors(xTr[yTr == yPr[testind],:], xTe[testind,:])
+
+
+print "by by"
 
