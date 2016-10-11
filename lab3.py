@@ -17,18 +17,19 @@ import random
 # NOTE: you do not need to handle the W argument for this part!
 # in: labels - N vector of class labels
 # out: prior - C x 1 vector of class priors
-def computePrior(labels, W=None):
-    N = labels.shape[0]
+def computePrior(y, W=None):
+    N = y.shape[0]
     if W is None:
         W = np.ones((N,1))/N
     else:
         assert(W.shape[0] == N)
-    classes = list(np.unique(labels))
+    classes = list(np.unique(y))
     #Nclasses = np.size(classes)
     #prior = np.zeros((Nclasses,1))
-    labels = list(labels)
-    prior = [labels.count(x)/float(N) for x in classes]
-    prior = np.matrix(prior)
+    y = list(y)
+    prior = [y.count(x)/float(N) for x in classes]
+    prior = np.matrix(prior).reshape((len(classes),1))
+    # TODO ska det vara en Cx1-vektor??? Annars ta bort reshape
     
     return prior
 
@@ -38,10 +39,10 @@ def computePrior(labels, W=None):
 #     labels - N vector of class labels
 # out:    mu - C x d matrix of class means (mu[i] - class i mean)
 #      sigma - C x d x d matrix of class covariances (sigma[i] - class i sigma)
-def mlParams(X, labels, W=None):
-    assert(X.shape[0]==labels.shape[0])
+def mlParams(X, y, W=None):
+    assert(X.shape[0]==y.shape[0])
     Npts,Ndims = np.shape(X)
-    classes = np.unique(labels)
+    classes = np.unique(y)
     Nclasses = np.size(classes)
 
     if W is None:
@@ -63,12 +64,12 @@ def mlParams(X, labels, W=None):
 
 X,y = genBlobs(200,5,2)
 
-#mu,S = mlParams(X,y)
-#print 'mu = ',mu
-#print 'Sigma = ',S
+mu,S = mlParams(X,y)
+print 'mu = ',mu
+print 'Sigma = ',S
 
 Pk = computePrior(y)
-print Pk
+print 'Priors = ',Pk
 
 
 # in:      X - N x d matrix of M data points
@@ -76,13 +77,20 @@ print Pk
 #         mu - C x d matrix of class means (mu[i] - class i mean)
 #      sigma - C x d x d matrix of class covariances (sigma[i] - class i sigma)
 # out:     h - N vector of class predictions for test points
-def classifyBayes(X, prior, mu, sigma):
+def classifyBayes(X, prior, mu, S):
 
-    Npts = X.shape[0]
-    Nclasses,Ndims = np.shape(mu)
-    logProb = np.zeros((Nclasses, Npts))
+    N = X.shape[0]                          # no of points
+    Ncl,Ndim = np.shape(mu)                 # no of classes and features
+    logProb = np.zeros((Ncl, N))         
 
-    # TODO: fill in the code to compute the log posterior logProb!
+    S0 = S[0,:,:]
+    print 'S0 = ', S0
+    detDiag = np.prod(np.diag(S0))
+    print 'detDiag = ',detDiag
+    SinvDiag = np.diag(1.0/np.diag(S0))     # to avoid division by zero of diag elem.
+    print 'SinvDiag = ',SinvDiag
+
+    # TODO : fill in the code to compute the log posterior logProb!
     # ==========================
     
     # ==========================
@@ -92,24 +100,26 @@ def classifyBayes(X, prior, mu, sigma):
     h = np.argmax(logProb,axis=0)
     return h
 
+classifyBayes(X,Pk,mu,S)
 
-# The implemented functions can now be summarized into the `BayesClassifier` class, which we will use later to test the classifier, no need to add anything else here:
-
+# The implemented functions can now be summarized into the `BayesClassifier` 
+# class, which we will use later to test the classifier, 
+# no need to add anything else here:
 
 # NOTE: no need to touch this
 class BayesClassifier(object):
     def __init__(self):
         self.trained = False
 
-    def trainClassifier(self, X, labels, W=None):
+    def trainClassifier(self, X, y, W=None):
         rtn = BayesClassifier()
-        rtn.prior = computePrior(labels, W)
-        rtn.mu, rtn.sigma = mlParams(X, labels, W)
+        rtn.prior = computePrior(y, W)
+        rtn.mu, rtn.S = mlParams(X, y, W)
         rtn.trained = True
         return rtn
 
     def classify(self, X):
-        return classifyBayes(X, self.prior, self.mu, self.sigma)
+        return classifyBayes(X, self.prior, self.mu, self.S)
 
 
 # ## Test the Maximum Likelihood estimates
@@ -117,9 +127,9 @@ class BayesClassifier(object):
 # Call `genBlobs` and `plotGaussian` to verify your estimates.
 
 
-X, labels = genBlobs(centers=5)
-mu, sigma = mlParams(X,labels)
-plotGaussian(X,labels,mu,sigma)
+X,y = genBlobs(centers=5)
+mu,S = mlParams(X,y)
+plotGaussian(X,y,mu,S)
 
 
 # Call the `testClassifier` and `plotBoundary` functions for this part.
@@ -147,7 +157,7 @@ plotGaussian(X,labels,mu,sigma)
 #                   T - number of boosting iterations
 # out:    classifiers - (maximum) length T Python list of trained classifiers
 #              alphas - (maximum) length T Python list of vote weights
-def trainBoost(base_classifier, X, labels, T=10):
+def trainBoost(base_classifier, X, y, T=10):
     # these will come in handy later on
     Npts,Ndims = np.shape(X)
 
@@ -159,12 +169,12 @@ def trainBoost(base_classifier, X, labels, T=10):
 
     for i_iter in range(0, T):
         # a new classifier can be trained like this, given the current weights
-        classifiers.append(base_classifier.trainClassifier(X, labels, wCur))
+        classifiers.append(base_classifier.trainClassifier(X, y, wCur))
 
         # do classification for each point
         vote = classifiers[-1].classify(X)
 
-        # TODO: Fill in the rest, construct the alphas etc.
+        # TODO : Fill in the rest, construct the alphas etc.
         # ==========================
         
         # alphas.append(alpha) # you will need to append the new alpha
@@ -187,7 +197,7 @@ def classifyBoost(X, classifiers, alphas, Nclasses):
     else:
         votes = np.zeros((Npts,Nclasses))
 
-        # TODO: implement classificiation when we have trained several classifiers!
+        # TODO : implement classificiation when we have trained several classifiers!
         # here we can do it by filling in the votes vector with weighted votes
         # ==========================
         
@@ -207,10 +217,10 @@ class BoostClassifier(object):
         self.T = T
         self.trained = False
 
-    def trainClassifier(self, X, labels):
+    def trainClassifier(self, X, y):
         rtn = BoostClassifier(self.base_classifier, self.T)
-        rtn.nbr_classes = np.size(np.unique(labels))
-        rtn.classifiers, rtn.alphas = trainBoost(self.base_classifier, X, labels, self.T)
+        rtn.nbr_classes = np.size(np.unique(y))
+        rtn.classifiers, rtn.alphas = trainBoost(self.base_classifier, X, y, self.T)
         rtn.trained = True
         return rtn
 
@@ -225,44 +235,31 @@ class BoostClassifier(object):
 
 #testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
 
-
-
 #testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='vowel',split=0.7)
-
-
 
 #plotBoundary(BoostClassifier(BayesClassifier()), dataset='iris',split=0.7)
 
-
 # Now repeat the steps with a decision tree classifier.
-
 
 #testClassifier(DecisionTreeClassifier(), dataset='iris', split=0.7)
 
-
-
 #testClassifier(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='iris',split=0.7)
-
-
 
 #testClassifier(DecisionTreeClassifier(), dataset='vowel',split=0.7)
 
-
-
 #testClassifier(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='vowel',split=0.7)
-
-
 
 #plotBoundary(DecisionTreeClassifier(), dataset='iris',split=0.7)
 
-
-
 #plotBoundary(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='iris',split=0.7)
-
 
 # ## Bonus: Visualize faces classified using boosted decision trees
 # 
-# Note that this part of the assignment is completely voluntary! First, let's check how a boosted decision tree classifier performs on the olivetti data. Note that we need to reduce the dimension a bit using PCA, as the original dimension of the image vectors is `64 x 64 = 4096` elements.
+# Note that this part of the assignment is completely voluntary! 
+# First, let's check how a boosted decision tree classifier performs 
+# on the olivetti data. Note that we need to reduce the dimension a 
+# bit using PCA, as the original dimension of the image vectors is 
+# `64 x 64 = 4096` elements.
 
 
 #testClassifier(BayesClassifier(), dataset='olivetti',split=0.7, dim=20)
@@ -272,7 +269,10 @@ class BoostClassifier(object):
 #testClassifier(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='olivetti',split=0.7, dim=20)
 
 
-# You should get an accuracy around 70%. If you wish, you can compare this with using pure decision trees or a boosted bayes classifier. Not too bad, now let's try and classify a face as belonging to one of 40 persons!
+# You should get an accuracy around 70%. If you wish, you can compare 
+# this with using pure decision trees or a boosted bayes classifier. 
+# Not too bad, now let's try and classify a face as belonging to 
+# one of 40 persons!
 
 
 #X,y,pcadim = fetchDataset('olivetti') # fetch the olivetti data
@@ -292,5 +292,4 @@ class BoostClassifier(object):
 #visualizeOlivettiVectors(xTr[yTr == yPr[testind],:], xTe[testind,:])
 
 
-print "by by"
 
