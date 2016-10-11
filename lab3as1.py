@@ -1,16 +1,7 @@
 # Assignment 1
 
-from sklearn.datasets.samples_generator import make_blobs
+import labfuns as fun
 import numpy as np
-
-
-def genBlobs(n_samples=10,centers=3,n_features=2):
-    #                  200 / 3 / 2 originally
-    # Supplied from the lab material
-    X, y = make_blobs(n_samples=n_samples,\
-            centers=centers, n_features=n_features,\
-            random_state=0)
-    return X,y
 
 def mlParams(X,y):
     # Assignment 1, computes ML-estimates of mu_k and Sigma_k    
@@ -34,11 +25,14 @@ def mlParams(X,y):
     
     return m, S
 
-X,y = genBlobs()
-
+X,y = fun.genBlobs(200,5,2)
+#                  200/5/2 orig
 print X
-print y
+print 'y = ', y
 
 m,S = mlParams(X,y)
 print m
 print S
+
+fun.plotGaussian(X,y,m,S)
+
