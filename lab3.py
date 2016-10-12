@@ -60,17 +60,9 @@ def mlParams(X, y, W=None):
         xic = Xk - muk          # center data for S-computation
         S[k,:,:] = np.diag(sum(xic*xic))/Nk     # Naive, (S(m,n) = 0, n != m)
 
+    #print 'mu = ',mu
+    #print 'S = ',S
     return mu, S
-
-X,y = genBlobs(200,5,2)
-
-mu,S = mlParams(X,y)
-print 'mu = ',mu
-print 'Sigma = ',S
-
-Pk = computePrior(y)
-print 'Priors = ',Pk
-
 
 # in:      X - N x d matrix of M data points
 #      prior - C x 1 matrix of class priors
@@ -83,36 +75,56 @@ def classifyBayes(X, prior, mu, S):
     Ncl,Ndim = np.shape(mu)                 # no of classes and features
     logProb = np.zeros((Ncl, N))
 
+
     # ==========================
     # TODO : fill in the code to compute the log posterior logProb!
-    S0 = S[0,:,:]
-    print 'S0 = ', S0
-    SdetDiag = np.prod(np.diag(S0))
-    print 'detDiag = ',SdetDiag
-    SinvDiag = np.diag(1.0/np.diag(S0))     # to avoid division by zero of diag elem.
-    print 'SinvDiag = ',SinvDiag
 
-    x = X[0,:] # unseen instance
+    for k in range(Ncl):
+        Sk = S[k,:,:]
+        #x = X[0,:] 
+        mmu = mu[k,:]
+        priorK = prior[k,:]
 
-    d1 = -0.5*math.log(SdetDiag)
-    d2 = -0.5*(x-mu)*SinvDiag*np.transpose(x-mu)
-    d3 = math.log(prior)
+        SdetDiag = np.prod(np.diag(Sk))
+        SinvDiag = np.diag(1.0/np.diag(Sk))     # to avoid division by zero of diag elem.
+        
+        d1 = -0.5*math.log(SdetDiag)
+        #d22 = -0.5*(x-mmu).dot(SinvDiag).dot((x-mmu).T)
+        d2 = -0.5*sum(np.multiply((X-mmu).dot(SinvDiag),(X-mmu)).T)
+        d3 = math.log(priorK)
 
-    print 'd1', d1
-    print 'd2', d2
-    print 'd3', d3
+        #print 'd1', d1
+        #print 'd2', d2
+        #print 'd22 ', d22
+        #print 'd3', d3
 
-    logProb = d1+d2+d3
-    # ==========================
+        logProb[k,:] = d2+d1+d3
+        # ==========================
 
-    # one possible way of finding max a-posteriori once
-    # you have computed the log posterior
-    #h = np.argmax(logProb,axis=0)
-    #return h
+        # one possible way of finding max a-posteriori once
+        # you have computed the log posterior
+    h = np.argmax(logProb,axis=0)
+    return h
+
+'''
+X,y = genBlobs(10,3,2)
+#           200/5/2 originally
+
+mu,S = mlParams(X,y)
+print 'mu = ',mu
+print 'Sigma = ',S
+
+Pk = computePrior(y)
+print 'Priors = ',Pk
+
 
 classifyBayes(X,Pk,mu,S)
+'''
 
-# The implemented functions can now be summarized into the `BayesClassifier`
+
+
+
+# The implementd functions can now be summarized into the `BayesClassifier`
 # class, which we will use later to test the classifier,
 # no need to add anything else here:
 
@@ -136,24 +148,22 @@ class BayesClassifier(object):
 #
 # Call `genBlobs` and `plotGaussian` to verify your estimates.
 
-
-X,y = genBlobs(centers=5)
+'''
+X,y = genBlobs(centers=3)
 mu,S = mlParams(X,y)
 plotGaussian(X,y,mu,S)
+'''
 
 
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
 
-#testClassifier(BayesClassifier(), dataset='iris', split=0.7)
-
-
+#testClassifier(BayesClassifier(), dataset='iris', split=0.7, ntrials=10)
+testClassifier(BayesClassifier(), dataset='iris', split=0.7)
 
 #testClassifier(BayesClassifier(), dataset='vowel', split=0.7)
 
-
-
-#plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
+plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
 
 
 # ## Boosting functions to implement

@@ -164,14 +164,16 @@ def plotGaussian(X,y,mu,sigma):
         classIdx = y==label
         Xclass = X[classIdx,:]
         plot_cov_ellipse(sigma[label], mu[label])
-        plt.scatter(Xclass[:,0],Xclass[:,1],linewidths=1,s=25,color=colors[label],marker='o',alpha=0.75)
+        plt.scatter(Xclass[:,0],Xclass[:,1],linewidths=1,\
+                s=25,color=colors[label],marker='o',alpha=0.75)
         c += 1.
 
     plt.show()
 
 
 # The function below, `testClassifier`, will be used to try out the different datasets.
-# `fetchDataset` can be provided with any of the dataset arguments `wine`, `iris`, `olivetti` and `vowel`.
+# `fetchDataset` can be provided with any of the dataset arguments `wine`, 
+# `iris`, `olivetti` and `vowel`.
 # Observe that we split the data into a **training** and a **testing** set.
 def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
 
@@ -204,7 +206,8 @@ def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
 
         means[trial] = 100*np.mean((yPr==yTe).astype(float))
 
-    print("Final mean classification accuracy ", "%.3g" % (np.mean(means)), "with standard deviation", "%.3g" % (np.std(means)))
+    print("Final mean classification accuracy ",\
+            "%.3g" % (np.mean(means)), "with standard deviation", "%.3g" % (np.std(means)))
 
 
 # ## Plotting the decision boundary
@@ -248,7 +251,9 @@ def plotBoundary(classifier, dataset='iris', split=0.7):
     conv = ColorConverter()
     for (color, c) in zip(colormap, classes):
         try:
-            CS = plt.contour(xRange,yRange,(grid==c).astype(float),15,linewidths=0.25,colors=conv.to_rgba_array(color))
+            CS = plt.contour(xRange,yRange,\
+                    (grid==c).astype(float),15,linewidths=0.25,\
+                    colors=conv.to_rgba_array(color))
         except ValueError:
             pass
         trClIdx = np.where(y[trIdx] == c)[0]
