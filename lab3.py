@@ -7,7 +7,7 @@ import numpy as np
 from scipy import misc
 from imp import reload
 from labfuns import *
-import random
+import random, math
 
 
 # Bayes classifier functions to implement
@@ -30,7 +30,7 @@ def computePrior(y, W=None):
     prior = [y.count(x)/float(N) for x in classes]
     prior = np.matrix(prior).reshape((len(classes),1))
     # TODO ska det vara en Cx1-vektor??? Annars ta bort reshape
-    
+
     return prior
 
 
@@ -81,29 +81,39 @@ def classifyBayes(X, prior, mu, S):
 
     N = X.shape[0]                          # no of points
     Ncl,Ndim = np.shape(mu)                 # no of classes and features
-    logProb = np.zeros((Ncl, N))         
+    logProb = np.zeros((Ncl, N))
 
+    # ==========================
+    # TODO : fill in the code to compute the log posterior logProb!
     S0 = S[0,:,:]
     print 'S0 = ', S0
-    detDiag = np.prod(np.diag(S0))
-    print 'detDiag = ',detDiag
+    SdetDiag = np.prod(np.diag(S0))
+    print 'detDiag = ',SdetDiag
     SinvDiag = np.diag(1.0/np.diag(S0))     # to avoid division by zero of diag elem.
     print 'SinvDiag = ',SinvDiag
 
-    # TODO : fill in the code to compute the log posterior logProb!
+    x = X[0,:] # unseen instance
+
+    d1 = -0.5*math.log(SdetDiag)
+    d2 = -0.5*(x-mu)*SinvDiag*np.transpose(x-mu)
+    d3 = math.log(prior)
+
+    print 'd1', d1
+    print 'd2', d2
+    print 'd3', d3
+
+    logProb = d1+d2+d3
     # ==========================
-    
-    # ==========================
-    
+
     # one possible way of finding max a-posteriori once
     # you have computed the log posterior
-    h = np.argmax(logProb,axis=0)
-    return h
+    #h = np.argmax(logProb,axis=0)
+    #return h
 
 classifyBayes(X,Pk,mu,S)
 
-# The implemented functions can now be summarized into the `BayesClassifier` 
-# class, which we will use later to test the classifier, 
+# The implemented functions can now be summarized into the `BayesClassifier`
+# class, which we will use later to test the classifier,
 # no need to add anything else here:
 
 # NOTE: no need to touch this
@@ -123,7 +133,7 @@ class BayesClassifier(object):
 
 
 # ## Test the Maximum Likelihood estimates
-# 
+#
 # Call `genBlobs` and `plotGaussian` to verify your estimates.
 
 
@@ -147,7 +157,7 @@ plotGaussian(X,y,mu,S)
 
 
 # ## Boosting functions to implement
-# 
+#
 # The lab descriptions state what each function should do.
 
 
@@ -176,10 +186,10 @@ def trainBoost(base_classifier, X, y, T=10):
 
         # TODO : Fill in the rest, construct the alphas etc.
         # ==========================
-        
+
         # alphas.append(alpha) # you will need to append the new alpha
         # ==========================
-        
+
     return classifiers, alphas
 
 # in:       X - N x d matrix of N data points
@@ -200,7 +210,7 @@ def classifyBoost(X, classifiers, alphas, Nclasses):
         # TODO : implement classificiation when we have trained several classifiers!
         # here we can do it by filling in the votes vector with weighted votes
         # ==========================
-        
+
         # ==========================
 
         # one way to compute yPred after accumulating the votes
@@ -229,7 +239,7 @@ class BoostClassifier(object):
 
 
 # ## Run some experiments
-# 
+#
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
 
@@ -254,11 +264,11 @@ class BoostClassifier(object):
 #plotBoundary(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='iris',split=0.7)
 
 # ## Bonus: Visualize faces classified using boosted decision trees
-# 
-# Note that this part of the assignment is completely voluntary! 
-# First, let's check how a boosted decision tree classifier performs 
-# on the olivetti data. Note that we need to reduce the dimension a 
-# bit using PCA, as the original dimension of the image vectors is 
+#
+# Note that this part of the assignment is completely voluntary!
+# First, let's check how a boosted decision tree classifier performs
+# on the olivetti data. Note that we need to reduce the dimension a
+# bit using PCA, as the original dimension of the image vectors is
 # `64 x 64 = 4096` elements.
 
 
@@ -269,9 +279,9 @@ class BoostClassifier(object):
 #testClassifier(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='olivetti',split=0.7, dim=20)
 
 
-# You should get an accuracy around 70%. If you wish, you can compare 
-# this with using pure decision trees or a boosted bayes classifier. 
-# Not too bad, now let's try and classify a face as belonging to 
+# You should get an accuracy around 70%. If you wish, you can compare
+# this with using pure decision trees or a boosted bayes classifier.
+# Not too bad, now let's try and classify a face as belonging to
 # one of 40 persons!
 
 
@@ -290,6 +300,3 @@ class BoostClassifier(object):
 # visualize the test point together with the training points used to train
 # the class that the test point was classified to belong to
 #visualizeOlivettiVectors(xTr[yTr == yPr[testind],:], xTe[testind,:])
-
-
-
