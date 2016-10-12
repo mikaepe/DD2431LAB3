@@ -47,7 +47,6 @@ def mlParams(X, y, W=None):
 
     if W is None:
         W = np.ones((Npts,1))/float(Npts)
-        print W                 # ADDED
 
     mu = np.zeros((Nclasses,Ndims))
     S = np.zeros((Nclasses,Ndims,Ndims))
@@ -55,20 +54,11 @@ def mlParams(X, y, W=None):
     for k,c in enumerate(classes):
         i = y == c              # return True/False length of labels
         Xk = X[i,:]             # the X with class c
-        Wk = W[i,:]
         Nk = sum(i)             # no of data pts class c
-        print 'Nk ',Nk
-        NkW = sum((i*W.T).T)    # ADDED
-        print 'NkWW ',NkW
-        XkW = np.multiply(Wk,Xk) # ADDED
         muk = sum(Xk)/Nk        # store mean in muk
-        print 'muk ',muk
         mu[k,:] = muk           # store muk in mu-matrix
         xic = Xk - muk          # center data for S-computation
         S[k,:,:] = np.diag(sum(xic*xic))/Nk     # Naive, (S(m,n) = 0, n != m)
-        print 'S ',S[k,:,:]
-        S[k,:,:] = np.diag(sum(Wk*xic*xic))/Nk  # ADDED Naive, (S(m,n) = 0, n != m)
-        print 'S ',S[k,:,:]
 
     #print 'mu = ',mu
     #print 'S = ',S
@@ -116,10 +106,28 @@ def classifyBayes(X, prior, mu, S):
     h = np.argmax(logProb,axis=0)
     return h
 
+'''
+X,y = genBlobs(10,3,2)
+#           200/5/2 originally
+
+mu,S = mlParams(X,y)
+print 'mu = ',mu
+print 'Sigma = ',S
+
+Pk = computePrior(y)
+print 'Priors = ',Pk
+
+
+classifyBayes(X,Pk,mu,S)
+'''
+
+
+
 
 # The implementd functions can now be summarized into the `BayesClassifier`
 # class, which we will use later to test the classifier,
 # no need to add anything else here:
+
 # NOTE: no need to touch this
 class BayesClassifier(object):
     def __init__(self):
@@ -136,26 +144,6 @@ class BayesClassifier(object):
         return classifyBayes(X, self.prior, self.mu, self.S)
 
 
-
-X,y = genBlobs(10,3,2)
-#           200/5/2 originally
-
-mu,S = mlParams(X,y)
-plotGaussian(X,y,mu,S)
-
-
-#print 'mu = ',mu
-#print 'Sigma = ',S
-
-#Pk = computePrior(y)
-#print 'Priors = ',Pk
-
-
-#classifyBayes(X,Pk,mu,S)
-
-
-
-
 # ## Test the Maximum Likelihood estimates
 #
 # Call `genBlobs` and `plotGaussian` to verify your estimates.
@@ -166,15 +154,16 @@ mu,S = mlParams(X,y)
 plotGaussian(X,y,mu,S)
 '''
 
+
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
 
 #testClassifier(BayesClassifier(), dataset='iris', split=0.7, ntrials=10)
-#testClassifier(BayesClassifier(), dataset='iris', split=0.7)
+testClassifier(BayesClassifier(), dataset='iris', split=0.7)
 
 #testClassifier(BayesClassifier(), dataset='vowel', split=0.7)
 
-#plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
+plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
 
 
 # ## Boosting functions to implement
