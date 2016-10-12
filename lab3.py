@@ -54,21 +54,38 @@ def mlParams(X, y, W=None):
 
     for k,c in enumerate(classes):
         i = y == c              # return True/False length of labels
+
         Xk = X[i,:]             # the X with class c
-        Wk = W[i,:]
-        Nk = sum(i)             # no of data pts class c
-        print 'Nk ',Nk
+        #Nk = sum(i)             # no of data pts class c
+
         NkW = sum((i*W.T).T)    # ADDED
-        print 'NkWW ',NkW
+        
+        Wk = W[i,:]                 # ADDED
         XkW = np.multiply(Wk,Xk) # ADDED
-        muk = sum(Xk)/Nk        # store mean in muk
+
+        #muk = sum(Xk)/Nk        # store mean in muk
+        mukW = sum(XkW)/NkW
+
+        #mu[k,:] = muk           # store muk in mu-matrix
+        #xic = Xk - muk          # center data for S-computation
+        xicW = Xk - mukW        # ADDED
+        #S[k,:,:] = np.diag(sum(xic*xic))/Nk     # Naive, (S(m,n) = 0, n != m)
+        
+        S[k,:,:] = np.diag(sum(Wk*xicW*xicW))/NkW  # ADDED Naive, (S(m,n) = 0, n != m)
+        
+        '''
+        print 'Nk ',Nk
+        print 'NkW ',NkW
+        print 'Xk ',Xk
+        print 'XkW ',XkW
         print 'muk ',muk
-        mu[k,:] = muk           # store muk in mu-matrix
-        xic = Xk - muk          # center data for S-computation
-        S[k,:,:] = np.diag(sum(xic*xic))/Nk     # Naive, (S(m,n) = 0, n != m)
+        print 'mukW ',mukW
         print 'S ',S[k,:,:]
-        S[k,:,:] = np.diag(sum(Wk*xic*xic))/Nk  # ADDED Naive, (S(m,n) = 0, n != m)
-        print 'S ',S[k,:,:]
+        print 'SW ',S[k,:,:]
+        '''
+        mu[k,:] = mukW
+        # TODO ta bort allt joks i funktionen
+        # ska dock funka ok nu...
 
     #print 'mu = ',mu
     #print 'S = ',S
