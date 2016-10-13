@@ -41,6 +41,7 @@ def computePrior(y, W=None):
         numerator = sum(((y == c)*W.T).T)
         print 'numerator = ',numerator
         denominator = sum(W)
+        # denominatorn ska inte behövas om vi vet att sum(W) alltid blir 1...
         prior[c] = numerator/denominator
 
     print 'priorNew = ', prior
