@@ -19,19 +19,36 @@ import random, math
 # out: prior - C x 1 vector of class priors
 def computePrior(y, W=None):
     N = y.shape[0]
+    print 'N = ',N
+    
     if W is None:
         W = np.ones((N,1))/N
+        print W
     else:
         assert(W.shape[0] == N)
     classes = list(np.unique(y))
-    #Nclasses = np.size(classes)
-    #prior = np.zeros((Nclasses,1))
-    y = list(y)
-    prior = [y.count(x)/float(N) for x in classes]
-    prior = np.matrix(prior).reshape((len(classes),1))
-    # TODO ska det vara en Cx1-vektor??? Annars ta bort reshape
 
-    return prior
+    yOLD = list(y)
+    
+    yW = y*W.T
+
+    priorOLD = [yOLD.count(x)/float(N) for x in classes]
+    priorOLD = np.matrix(priorOLD).reshape((len(classes),1))
+
+    prior = np.zeros((len(classes),1))
+    for c in classes:
+        print 'c = ',c
+        numerator = sum(((y == c)*W.T).T)
+        print 'numerator = ',numerator
+        denominator = sum(W)
+        prior[c] = numerator/denominator
+
+    print 'priorNew = ', prior
+    print 'priorOld = ', priorOLD
+
+    # TODO snygga till det här och ta bort lite joks
+
+    return priorOLD
 
 
 # NOTE: you do not need to handle the W argument for this part!
@@ -47,48 +64,24 @@ def mlParams(X, y, W=None):
 
     if W is None:
         W = np.ones((Npts,1))/float(Npts)
-        print W                 # ADDED
 
     mu = np.zeros((Nclasses,Ndims))
     S = np.zeros((Nclasses,Ndims,Ndims))
 
     for k,c in enumerate(classes):
-        i = y == c              # return True/False length of labels
-
-        Xk = X[i,:]             # the X with class c
-        #Nk = sum(i)             # no of data pts class c
-
-        NkW = sum((i*W.T).T)    # ADDED
+        i = y == c                  # return True/False length of labels
+        Xk = X[i,:]                 # the X with class c
+        NkW = sum((i*W.T).T)        # ADDED
         
         Wk = W[i,:]                 # ADDED
-        XkW = np.multiply(Wk,Xk) # ADDED
+        XkW = np.multiply(Wk,Xk)    # ADDED
 
-        #muk = sum(Xk)/Nk        # store mean in muk
         mukW = sum(XkW)/NkW
-
-        #mu[k,:] = muk           # store muk in mu-matrix
-        #xic = Xk - muk          # center data for S-computation
-        xicW = Xk - mukW        # ADDED
-        #S[k,:,:] = np.diag(sum(xic*xic))/Nk     # Naive, (S(m,n) = 0, n != m)
+        xicW = Xk - mukW            # ADDED
         
         S[k,:,:] = np.diag(sum(Wk*xicW*xicW))/NkW  # ADDED Naive, (S(m,n) = 0, n != m)
-        
-        '''
-        print 'Nk ',Nk
-        print 'NkW ',NkW
-        print 'Xk ',Xk
-        print 'XkW ',XkW
-        print 'muk ',muk
-        print 'mukW ',mukW
-        print 'S ',S[k,:,:]
-        print 'SW ',S[k,:,:]
-        '''
         mu[k,:] = mukW
-        # TODO ta bort allt joks i funktionen
-        # ska dock funka ok nu...
 
-    #print 'mu = ',mu
-    #print 'S = ',S
     return mu, S
 
 # in:      X - N x d matrix of M data points
@@ -102,13 +95,8 @@ def classifyBayes(X, prior, mu, S):
     Ncl,Ndim = np.shape(mu)                 # no of classes and features
     logProb = np.zeros((Ncl, N))
 
-
-    # ==========================
-    # TODO : fill in the code to compute the log posterior logProb!
-
     for k in range(Ncl):
         Sk = S[k,:,:]
-        #x = X[0,:] 
         mmu = mu[k,:]
         priorK = prior[k,:]
 
@@ -116,7 +104,6 @@ def classifyBayes(X, prior, mu, S):
         SinvDiag = np.diag(1.0/np.diag(Sk))     # to avoid division by zero of diag elem.
         
         d1 = -0.5*math.log(SdetDiag)
-        #d22 = -0.5*(x-mmu).dot(SinvDiag).dot((x-mmu).T)
         d2 = -0.5*sum(np.multiply((X-mmu).dot(SinvDiag),(X-mmu)).T)
         d3 = math.log(priorK)
 
@@ -126,10 +113,7 @@ def classifyBayes(X, prior, mu, S):
         #print 'd3', d3
 
         logProb[k,:] = d2+d1+d3
-        # ==========================
 
-        # one possible way of finding max a-posteriori once
-        # you have computed the log posterior
     h = np.argmax(logProb,axis=0)
     return h
 
@@ -160,6 +144,8 @@ X,y = genBlobs(10,3,2)
 mu,S = mlParams(X,y)
 plotGaussian(X,y,mu,S)
 
+pk = computePrior(y)
+print pk
 
 #print 'mu = ',mu
 #print 'Sigma = ',S
