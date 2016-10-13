@@ -62,10 +62,11 @@ def computePrior(y, W=None):
 
     prior = np.zeros((len(classes),1))
     for c in classes:
-        numerator = sum(((y == c)*W.T).T)
-        denominator = sum(W)
-        # denominatorn ska inte behövas om vi vet att sum(W) alltid blir 1...
-        prior[c] = numerator/denominator
+        #numerator = sum(((y == c)*W.T).T)
+        #denominator = sum(W)
+        #denominatorn ska inte behövas om vi vet att sum(W) alltid blir 1...
+        #prior[c] = numerator/denominator
+        prior[c] = sum(((y == c)*W.T).T)
 
     # TODO snygga till det här och ta bort lite joks
 
@@ -139,14 +140,14 @@ def trainBoost(base_classifier, X, y, T=10):
     # these will come in handy later on
     Npts,Ndims = np.shape(X)
 
-    classifiers = [] # append new classifiers to this list
-    alphas = [] # append the vote weight of the classifiers to this list
+    classifiers = []    # append new classifiers to this list
+    alphas = []         # append the vote weight of the classifiers to this list
 
     # The weights for the first iteration
     wCur = np.ones((Npts,1))/float(Npts)
     #print 'init wCur= ', wCur
 
-    for i_iter in range(0, T):
+    for i_iter in range(T):
         print 'ITER ', i_iter
         #print 'Wcur =', wCur
         # a new classifier can be trained like this, given the current weights
@@ -155,7 +156,7 @@ def trainBoost(base_classifier, X, y, T=10):
         # do classification for each point
         #vote = classifiers[-1].classify(X) # RENAMED
         ht = classifiers[-1].classify(X)
-        #print 'ht = ', ht
+        print 'ht = ', ht
 
         # TODO : Fill in the rest, construct the alphas etc.
         # ==========================
@@ -164,8 +165,11 @@ def trainBoost(base_classifier, X, y, T=10):
         pk = computePrior(y, wCur)
         # compute errors w.r.t. current weight wCur (step 2):
         i = ht == y # i is zero if ht != ci
+        #print 'ht = ', ht
+        #print 'y = ', y
         #print 'i = ', i
         et = sum((wCur.T*(1-i)).T)
+        et = max(et,1e-6)           # TODO RIKTIGT FULHAXX!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         print 'et =', et
         # compute alphas w.r.t. current weight wCur (step 3):
         alphat = 0.5*(math.log(1-et)-math.log(et))
@@ -200,6 +204,18 @@ def classifyBoost(X, classifiers, alphas, Nclasses):
         # TODO : implement classificiation when we have trained several classifiers!
         # here we can do it by filling in the votes vector with weighted votes
         # ==========================
+        for c in range(Nclasses):
+            suM = np.zeros((Npts,1))
+            print suM.shape
+            for t in range(Ncomps):
+                ht = classifiers[t].classify(X)
+                print 'ht_IN_SUM = ',ht
+                delta = ht == c*np.ones((1,Npts))
+                print 'delta in sum = ', delta
+                print 'alphat in sum = ', alphas[t]
+                print delta.shape
+                suM += alphas[t]*delta.reshape((Npts,1))
+            votes[:,c] = suM.reshape((1,Npts))
 
         # ==========================
 
@@ -207,7 +223,10 @@ def classifyBoost(X, classifiers, alphas, Nclasses):
         return np.argmax(votes,axis=1)
 
 
-# The implemented functions can now be summarized another classifer, the `BoostClassifier` class. This class enables boosting different types of classifiers by initializing it with the `base_classifier` argument. No need to add anything here.
+# The implemented functions can now be summarized another classifer, 
+# the `BoostClassifier` class. This class enables boosting different 
+# types of classifiers by initializing it with the `base_classifier` 
+# argument. No need to add anything here.
 
 
 # NOTE: no need to touch this

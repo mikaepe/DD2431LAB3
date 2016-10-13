@@ -3,12 +3,12 @@
 
 # # Lab 3: Bayes Classifier and Boosting
 
-import lab3fun as fun
+from lab3fun import *
 
 # ------- CALCULATIONS // FUNCTION CALLS -------
 
 # PRINT THINGS OR NOT
-print_debug = True
+print_debug = False
 # ## Test the Maximum Likelihood estimates
 #
 # Call `genBlobs` and `plotGaussian` to verify your estimates.
@@ -19,16 +19,16 @@ mu,S = mlParams(X,y)
 plotGaussian(X,y,mu,S)
 '''
 
-X,y = fun.genBlobs(20,3,2)
+X,y = genBlobs(10,3,2)
 #           200/5/2 originally
 if print_debug == True: print 'X = ', X
 if print_debug == True: print 'y = ', y
 
 
-mu,S = fun.mlParams(X,y)
-pk = fun.computePrior(y)
+mu,S = mlParams(X,y)
+pk = computePrior(y)
 
-#fun.plotGaussian(X,y,mu,S)
+plotGaussian(X,y,mu,S)
 
 if print_debug == True: print 'mu = ', mu
 if print_debug == True: print 'Sigma = ', S
@@ -38,8 +38,7 @@ if print_debug == True: print 'pk = ', pk
 #testClassifier(BayesClassifier(), dataset='iris', split=0.7)
 #testClassifier(BayesClassifier(), dataset='vowel', split=0.7)
 #plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
-classifiers, alphas = fun.trainBoost(fun.BayesClassifier(), X, y, T=5)
-# WHY DOES IT NOT WORK WITH T = 10?
+#classifiers, alphas = fun.trainBoost(fun.BayesClassifier(), X, y, T=2)
 if print_debug == True: print 'classifiers= ', classifiers
 if print_debug == True: print 'alphas =', alphas
 
@@ -49,7 +48,7 @@ if print_debug == True: print 'alphas =', alphas
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
 
-#testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
+testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
 
 #testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='vowel',split=0.7)
 
