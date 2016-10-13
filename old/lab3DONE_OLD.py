@@ -9,15 +9,33 @@ from fun import *
 
 # PRINT THINGS OR NOT
 print_debug = True
+# ## Test the Maximum Likelihood estimates
+#
+# Call `genBlobs` and `plotGaussian` to verify your estimates.
 
-as1 = 0
+as1 = 1
 if as1:
     X,y = genBlobs(centers=5)
     mu,S = mlParams(X,y)
     plotGaussian(X,y,mu,S)
 
-as3 = 1
-if as3:
+bb = 1
+if bb:
+    X,y = genBlobs(10,3,2)
+    #           200/5/2 originally
+    if print_debug == True: print 'X = ', X
+    if print_debug == True: print 'y = ', y
+    mu,S = mlParams(X,y)
+    pk = computePrior(y)
+    plotGaussian(X,y,mu,S)
+    
+    if print_debug == True: print 'mu = ', mu
+    if print_debug == True: print 'Sigma = ', S
+    if print_debug == True: print 'pk = ', pk
+    plotGaussian(X,y,mu,S)
+
+cc = 0
+if cc:
     # Call the `testClassifier` and `plotBoundary` functions for this part.
 
     testClassifier(BayesClassifier(), dataset='iris', split=0.7)
