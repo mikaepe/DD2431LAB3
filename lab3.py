@@ -8,7 +8,7 @@ import lab3fun as fun
 # ------- CALCULATIONS // FUNCTION CALLS -------
 
 # PRINT THINGS OR NOT
-print_debug = False
+print_debug = True
 # ## Test the Maximum Likelihood estimates
 #
 # Call `genBlobs` and `plotGaussian` to verify your estimates.

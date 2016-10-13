@@ -166,7 +166,7 @@ def trainBoost(base_classifier, X, y, T=10):
         i = ht == y # i is zero if ht != ci
         #print 'i = ', i
         et = sum((wCur.T*(1-i)).T)
-        #print 'et =', et
+        print 'et =', et
         # compute alphas w.r.t. current weight wCur (step 3):
         alphat = 0.5*(math.log(1-et)-math.log(et))
         # update weights (step 4):
