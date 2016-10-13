@@ -147,7 +147,8 @@ def scatter2D(X,y):
     for label in labels:
         classIdx = np.where(y==label)[0]
         Xclass = X[classIdx,:]
-        plt.scatter(Xclass[:,0],Xclass[:,1],linewidths=1,s=25,color=colors[label],marker='o',alpha=0.75)
+        plt.scatter(Xclass[:,0],Xclass[:,1],linewidths=1,\
+                s=25,color=colors[label],marker='o',alpha=0.75)
         c += 1.
 
     plt.show()
