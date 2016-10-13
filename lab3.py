@@ -16,7 +16,7 @@ if as1:
     mu,S = mlParams(X,y)
     plotGaussian(X,y,mu,S)
 
-as3 = 1
+as3 = 0
 if as3:
     # Call the `testClassifier` and `plotBoundary` functions for this part.
 
@@ -26,8 +26,8 @@ if as3:
     #classifiers, alphas = fun.trainBoost(fun.BayesClassifier(), X, y, T=2)
 
 
-dd = 0
-if dd:
+as5 = 0
+if as5:
 
     testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
     testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='vowel',split=0.7)
@@ -35,8 +35,8 @@ if dd:
 
 # Now repeat the steps with a decision tree classifier.
 
-ee = 0
-if ee:
+as6 = 1
+if as6:
 
 
     testClassifier(DecisionTreeClassifier(), dataset='iris', split=0.7)

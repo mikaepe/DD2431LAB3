@@ -2,7 +2,7 @@
 
 %%Packages	%%%	%%%	%%%	%%%	%%%	%%%	%%%
 \usepackage{amsmath,framed}
-\usepackage[latin1]{inputenc} 	
+\usepackage[utf8]{inputenc} 	
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{graphicx}
@@ -156,8 +156,17 @@ The decision boundary for the 2D-iris data is depicted in Figure \ref{FIGas2}.
 Questions:
 \begin{itemize}
   \item[1)] When can feature independence assumption be reasonable?
+  \item[A:] When one may assume that there is no or little correlation between the 
+    features. In the Iris-set one may assume that there is positive correlation
+    between petal width and petal length (or sepal width \& length), c.f.
+    \texttt{https://archive.ics.uci.edu/ml/datasets/Iris}.
   \item[2)] How does the decision boundary look for the iris dataset? How could one improve the
     results for this scenario by changing the classifier, or by manipulating the data?
+  \item[A:] It looks like class 0 is has fairly uncorrelated features while class 1 and class 2 
+    has not. One could use a ``non-naive'' Bayes classifier, i.e. where it is not 
+    necissarily the case that 
+    $\Sigma(m,n) = 0, \quad n \ne m$. One could possibly make non linear
+    transformation of the data.
 \end{itemize}
 $ $\\
 \textbf{Assignment 4}
@@ -169,8 +178,95 @@ Refer to code for the augmented functions \texttt{mlParams()}
 
 
 $ $\\
-\textbf{Assignment 4}
+\textbf{Assignment 5}
 \\
+Refer to code for augmented function \texttt{computePrior()}. Also for 
+implementations of \texttt{trainBoost()} and \texttt{classifyBoost()}.
+The results of running 
+\begin{scriptsize}
+  \begin{verbatim}
+  testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
+  testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='vowel',split=0.7)
+  \end{verbatim}
+\end{scriptsize}
+are given below.
+Decision boundary for the iris data using boosting is given in Figure \ref{FIGas3}.
+
+
+\newpage
+\begin{framed}
+  \begin{scriptsize}
+  \begin{verbatim}
+  Trial: 0 Accuracy 95.6
+  Trial: 10 Accuracy 100
+  Trial: 20 Accuracy 93.3
+  Trial: 30 Accuracy 91.1
+  Trial: 40 Accuracy 97.8
+  Trial: 50 Accuracy 93.3
+  Trial: 60 Accuracy 93.3
+  Trial: 70 Accuracy 97.8
+  Trial: 80 Accuracy 95.6
+  Trial: 90 Accuracy 93.3
+  Final mean classification accuracy  94.7 with standard deviation 2.82
+  Trial: 0 Accuracy 76.6
+  Trial: 10 Accuracy 86.4
+  Trial: 20 Accuracy 83.1
+  Trial: 30 Accuracy 80.5
+  Trial: 40 Accuracy 72.7
+  Trial: 50 Accuracy 76
+  Trial: 60 Accuracy 81.8
+  Trial: 70 Accuracy 82.5
+  Trial: 80 Accuracy 79.9
+  Trial: 90 Accuracy 83.1
+  Final mean classification accuracy  80.2 with standard deviation 3.52
+  \end{verbatim}
+  \end{scriptsize}
+\end{framed}
+\noindent
+
+
+
+
+
+
+
+
+
+
+
+
+\FloatBarrier
+\begin{figure}[h!]
+  \center
+  \includegraphics[width = 150mm]{figure_3.png}
+  \vspace{-15mm}
+
+  \begin{minipage}[t]{95mm}
+    \caption{
+      Boundary for the iris data using boosting.
+    }
+    \label{FIGas3}
+  \end{minipage}
+\end{figure}
+\FloatBarrier
+
+\newpage
+\noindent
+Questions:
+\begin{itemize}
+  \item[1)] Is there any improvement in classification accuracy? Why/why not?
+  \item[A:] Yes, this is because the boosting puts more weight on the
+    missclassified points
+    \marginpar{TODO, har vi koll på detta?}
+  \item[2)] Plot the decision boundary of the boosted classifier for the iris set.
+    What differences do you notice? Is the boundary of the boosted version more
+    complex?
+  \item[A:] See Figures \ref{FIGas2} and \ref{FIGas3}. Yes, more complex. Also copes better
+    with the correlation
+  \item[3)] Can we make up for not using a more complex model by using boosting?
+    E.g. not using independent features.
+  \item[A:] Yes, at least to some extent.
+\end{itemize}
 
 
 
@@ -185,6 +281,126 @@ $ $\\
 
 
 
+
+
+
+
+
+$ $\\
+\textbf{Assignment 6}
+\\
+Result of running
+\begin{scriptsize}
+  \begin{verbatim}
+  testClassifier(DecisionTreeClassifier(), dataset='iris', split=0.7)
+  testClassifier(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='iris',split=0.7)
+  testClassifier(DecisionTreeClassifier(), dataset='vowel',split=0.7)
+  testClassifier(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='vowel',split=0.7)
+  \end{verbatim}
+\end{scriptsize}
+is given:
+\begin{framed}
+  \begin{scriptsize}
+    \begin{verbatim}
+    Trial: 0 Accuracy 95.6
+    Trial: 10 Accuracy 100
+    Trial: 20 Accuracy 91.1
+    Trial: 30 Accuracy 91.1
+    Trial: 40 Accuracy 93.3
+    Trial: 50 Accuracy 91.1
+    Trial: 60 Accuracy 88.9
+    Trial: 70 Accuracy 88.9
+    Trial: 80 Accuracy 93.3
+    Trial: 90 Accuracy 88.9
+    Final mean classification accuracy  92.4 with standard deviation 3.71
+    Trial: 0 Accuracy 95.6
+    Trial: 10 Accuracy 100
+    Trial: 20 Accuracy 95.6
+    Trial: 30 Accuracy 93.3
+    Trial: 40 Accuracy 93.3
+    Trial: 50 Accuracy 95.6
+    Trial: 60 Accuracy 88.9
+    Trial: 70 Accuracy 93.3
+    Trial: 80 Accuracy 93.3
+    Trial: 90 Accuracy 93.3
+    Final mean classification accuracy  94.6 with standard deviation 3.65
+    Trial: 0 Accuracy 63.6
+    Trial: 10 Accuracy 68.8
+    Trial: 20 Accuracy 63.6
+    Trial: 30 Accuracy 66.9
+    Trial: 40 Accuracy 59.7
+    Trial: 50 Accuracy 63
+    Trial: 60 Accuracy 59.7
+    Trial: 70 Accuracy 68.8
+    Trial: 80 Accuracy 59.7
+    Trial: 90 Accuracy 68.2
+    Final mean classification accuracy  64.1 with standard deviation 4
+    Trial: 0 Accuracy 85.7
+    Trial: 10 Accuracy 90.3
+    Trial: 20 Accuracy 88.3
+    Trial: 30 Accuracy 90.9
+    Trial: 40 Accuracy 84.4
+    Trial: 50 Accuracy 81.2
+    Trial: 60 Accuracy 87.7
+    Trial: 70 Accuracy 86.4
+    Trial: 80 Accuracy 87
+    Trial: 90 Accuracy 90.3
+    Final mean classification accuracy  86.7 with standard deviation 2.7
+    \end{verbatim}
+  \end{scriptsize}
+\end{framed}
+
+
+
+
+
+\FloatBarrier
+\begin{figure}[h!]
+  \center
+  \includegraphics[width = 150mm]{figure_4.png}
+  \vspace{-15mm}
+
+  \begin{minipage}[t]{95mm}
+    \caption{
+      Decision tree.
+    }
+    \label{FIGas4}
+  \end{minipage}
+\end{figure}
+\FloatBarrier
+
+
+
+
+
+\FloatBarrier
+\begin{figure}[h!]
+  \center
+  \includegraphics[width = 150mm]{figure_5.png}
+  \vspace{-15mm}
+
+  \begin{minipage}[t]{95mm}
+    \caption{
+      Boosted decision tree.
+    }
+    \label{FIGas3}
+  \end{minipage}
+\end{figure}
+\FloatBarrier
+
+\noindent
+Questions:
+\begin{itemize}
+  \item[1)] Is there any improvement in classification accuracy? Why/why not?
+  \item[A:]
+  \item[2)] Plot the decision boundary of the boosted classifier for the iris set.
+    What differences do you notice? Is the boundary of the boosted version more
+    complex?
+  \item[A:]
+  \item[3)] Can we make up for not using a more complex model by using boosting?
+    E.g. not using independent features.
+  \item[A:] 
+\end{itemize}
 
 
 
