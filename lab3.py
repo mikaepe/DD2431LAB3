@@ -26,7 +26,7 @@ if as3:
     #classifiers, alphas = fun.trainBoost(fun.BayesClassifier(), X, y, T=2)
 
 
-as5 = 0
+as5 = 1
 if as5:
 
     testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
@@ -35,7 +35,7 @@ if as5:
 
 # Now repeat the steps with a decision tree classifier.
 
-as6 = 1
+as6 = 0
 if as6:
 
 

@@ -388,18 +388,20 @@ is given:
 \end{figure}
 \FloatBarrier
 
+\newpage
 \noindent
 Questions:
 \begin{itemize}
   \item[1)] Is there any improvement in classification accuracy? Why/why not?
-  \item[A:]
+  \item[A:] Yes, in particular for the vowel data set. The mean accuracy increases from
+    64.1 \% to 86.7 \%. Not so much for the iris data set. 
   \item[2)] Plot the decision boundary of the boosted classifier for the iris set.
     What differences do you notice? Is the boundary of the boosted version more
     complex?
-  \item[A:]
+  \item[A:] Boosted version is more complex. Both seems to find a boundary that runs
+    in parallell to the axes.
   \item[3)] Can we make up for not using a more complex model by using boosting?
-    E.g. not using independent features.
-  \item[A:] 
+  \item[A:] Yes
 \end{itemize}
 
 
@@ -407,8 +409,24 @@ Questions:
 
 
 
-
-
+$ $\\
+\textbf{Assignment 7}
+\\
+If you had to pick a classifier, naive Bayes or a decision tree or
+the boosted versions of these, which one would you pick? Motivate from the following
+criteria:
+\begin{itemize}
+  \item Outliers
+  \item Irrelevant inputs: part of the feature space is irrelevant
+  \item Predictive power
+  \item Mixed types of data: binary, categorical or continuous features, etc.
+  \item Scalability: the dimension of the data, D, is large or the number of instances,
+    N , is large, or both.
+\end{itemize}
+We would pick boosted decision tree. It seems to take less computing resources as $N$ and/or $D$
+grows. It has only slightly lower classification accuracy 
+than the boosted naive Bayes classifier for the iris set. It should also work well for binary or 
+categorical data.
 \end{document}
 
 
