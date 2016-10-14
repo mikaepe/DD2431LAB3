@@ -417,16 +417,25 @@ the boosted versions of these, which one would you pick? Motivate from the follo
 criteria:
 \begin{itemize}
   \item Outliers
+  \item[-] Naive Bayes with no or little boosting.
   \item Irrelevant inputs: part of the feature space is irrelevant
+  \item[-] Decision tree, with pruning should be good.
   \item Predictive power
+  \item[-] Naive Bayes with boosting
   \item Mixed types of data: binary, categorical or continuous features, etc.
+  \item[-] Decision tree should cope well binary, categorical and mixtures of these and 
+    continous. Maybe Naive Bayes too if we have suitable probability distributions for the 
+    data.
   \item Scalability: the dimension of the data, D, is large or the number of instances,
     N , is large, or both.
+  \item[-] Naive Bayes require moderate or large training set.
 \end{itemize}
-We would pick boosted decision tree. It seems to take less computing resources as $N$ and/or $D$
-grows. It has only slightly lower classification accuracy 
-than the boosted naive Bayes classifier for the iris set. It should also work well for binary or 
-categorical data.
+
+
+
+
+
+
 \end{document}
 
 
