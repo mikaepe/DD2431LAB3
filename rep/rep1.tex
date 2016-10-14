@@ -256,7 +256,9 @@ Questions:
 \begin{itemize}
   \item[1)] Is there any improvement in classification accuracy? Why/why not?
   \item[A:] Yes, this is because the boosting puts more weight on the
-    missclassified points
+    missclassified points. This is in accordance with theory, where boosting
+    should increase the performance of a high bias low variance classifier
+    such as Naive Bayes.
     \marginpar{TODO, har vi koll på detta?}
   \item[2)] Plot the decision boundary of the boosted classifier for the iris set.
     What differences do you notice? Is the boundary of the boosted version more
@@ -395,11 +397,14 @@ Questions:
   \item[1)] Is there any improvement in classification accuracy? Why/why not?
   \item[A:] Yes, in particular for the vowel data set. The mean accuracy increases from
     64.1 \% to 86.7 \%. Not so much for the iris data set. 
+    We seem to get accuracy increase from boosting 
+    even though decision trees are low bias high variance.
+    In theory, bagging should work well for decision trees.
   \item[2)] Plot the decision boundary of the boosted classifier for the iris set.
     What differences do you notice? Is the boundary of the boosted version more
     complex?
   \item[A:] Boosted version is more complex. Both seems to find a boundary that runs
-    in parallell to the axes.
+    in parallell to the axes. This is due to splits.
   \item[3)] Can we make up for not using a more complex model by using boosting?
   \item[A:] Yes
 \end{itemize}
@@ -417,18 +422,20 @@ the boosted versions of these, which one would you pick? Motivate from the follo
 criteria:
 \begin{itemize}
   \item Outliers
-  \item[-] Naive Bayes with no or little boosting.
+  \item[-] Naive Bayes with no or little boosting. With boosting, more weight would be put
+    on the outliers.
   \item Irrelevant inputs: part of the feature space is irrelevant
-  \item[-] Decision tree, with pruning should be good.
+  \item[-] Decision tree due to the info-gain feature. With pruning should be good too.
   \item Predictive power
   \item[-] Naive Bayes with boosting
   \item Mixed types of data: binary, categorical or continuous features, etc.
   \item[-] Decision tree should cope well binary, categorical and mixtures of these and 
     continous. Maybe Naive Bayes too if we have suitable probability distributions for the 
-    data.
+    data. Naive Bayes work well with continous data (e.g. image processing).
   \item Scalability: the dimension of the data, D, is large or the number of instances,
     N , is large, or both.
-  \item[-] Naive Bayes require moderate or large training set.
+  \item[-] Naive Bayes require moderate or large training set. Decision trees work well when 
+    the amount of data increases.
 \end{itemize}
 
 
