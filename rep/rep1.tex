@@ -55,7 +55,7 @@ $k$ given by
   P(k|x^*) = \frac{P_k(x^*|k)P(k)}{\underset{{k_i \in C}}{\sum}P_{k_i}(x^*|k_i)P(k_i)}
 \end{equation*}
 where $p_k(x^*|k)$ is the class conditional density, $C$ is the set of classes and $p(k)$
-is the prior probability of class $k$. Assuming the density is described by a multivariat Gaussian 
+is the prior probability of class $k$. Assuming the density is described by a multivariate Gaussian 
 we have
 \begin{equation*}
   p_k(x|k) = \frac{1}{\sqrt{(2 \pi)^d \det \Sigma}}
@@ -255,19 +255,17 @@ Decision boundary for the iris data using boosting is given in Figure \ref{FIGas
 Questions:
 \begin{itemize}
   \item[1)] Is there any improvement in classification accuracy? Why/why not?
-  \item[A:] Yes, this is because the boosting puts more weight on the
-    missclassified points. This is in accordance with theory, where boosting
-    should increase the performance of a high bias low variance classifier
-    such as Naive Bayes.
-    \marginpar{TODO, har vi koll på detta?}
+  \item[A:] Yes. As it identifies misclassified points of one classifier and focuses on them while training a new classifier, we gather information from previous classifications.  This is in accordance with theory, where boosting should increase the performance of a high bias low variance classifier such as Naive Bayes, as the classifier tends to underfit data.
+  	% naive Bayes => high bias low variance (underfitting)
+    %\marginpar{TODO, har vi koll på detta?}
   \item[2)] Plot the decision boundary of the boosted classifier for the iris set.
     What differences do you notice? Is the boundary of the boosted version more
     complex?
   \item[A:] See Figures \ref{FIGas2} and \ref{FIGas3}. Yes, more complex. Also copes better
-    with the correlation
+    with the correlation.
   \item[3)] Can we make up for not using a more complex model by using boosting?
     E.g. not using independent features.
-  \item[A:] Yes, at least to some extent.
+  \item[A:] Yes, at least to some extent. The point of AdaBoost is that it can turn weak learners into a strong learner, under some assumptions on the error (the error rate has to be less than 0.5, corresponding to randomness). 
 \end{itemize}
 
 
